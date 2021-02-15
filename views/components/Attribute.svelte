@@ -10,7 +10,7 @@
 </script>
 
 <g class="tbl-attr-container" transform="translate(0 {height * (index + 1)})">
-	<rect class="tbl-attr" />
+	<rect class="tbl-attr" {width} {height} />
 
 	<text
 		dx={attrPadding}
@@ -41,8 +41,6 @@
 
 	.tbl-attr {
 		fill: var(--attr-bkg);
-		width: var(--attr-width);
-		height: var(--attr-height);
 	}
 
 	.attr-name {
