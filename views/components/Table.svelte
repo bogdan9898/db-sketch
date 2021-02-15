@@ -4,15 +4,16 @@
 	import { resizeIndicatorDataStore } from "../store.js";
 	import { printCTM } from "../debugging.js";
 	import Header from "./Header.svelte";
+	import Attribute from "./Attribute.svelte";
+	import { dimSpecs } from "../constants.js";
 
 	export let tableData;
 	export let rootGroup;
-	export let dimSpecs;
 	const config = dimSpecs; // TO BE DELETED!
 
 	const attributesCount = Object.entries(tableData["attributes"]).length;
 
-	let origin = tableData["table-metadata"].translate;
+	$: origin = tableData["table-metadata"].translate;
 	let container;
 	let corners = {};
 	let elements = {
@@ -23,10 +24,14 @@
 		}),
 	};
 
-	let attrWidth = config["attr-width"];
-	let attrHeight = config["attr-height"];
+	$: attrWidth = dimSpecs["attr-width"];
+	$: attrHeight = dimSpecs["attr-height"];
+	$: fontSize = dimSpecs["font-size"];
+	$: headerFontScale = dimSpecs["header-font-scale"];
+	$: attrPadding = dimSpecs["attr-padding"];
 
 	let dimensions = {
+		// TO BE DELETED!
 		attrWidth: config["attr-width"],
 		attrHeight: config["attr-height"],
 		totalHeight: config["attr-height"] * (attributesCount + 1),
@@ -35,8 +40,8 @@
 	};
 
 	let constraints = {
-		minAttrWidth: config["min-attr-width"],
-		minAttrHeight: config["min-attr-height"],
+		minAttrWidth: dimSpecs["min-attr-width"],
+		minAttrHeight: dimSpecs["min-attr-height"],
 	};
 
 	let resizeIndicatorData = {};
@@ -303,7 +308,12 @@
 <g bind:this={container} transform="translate({origin[0]} {origin[1]})" clip-path="url(#round-corners)">
 	<defs>
 		<clipPath id="round-corners">
-			<rect width={dimensions.attrWidth} height={config["attr-height"] * (attributesCount + 1)} rx="5" ry="5" />
+			<rect
+				width={dimensions.attrWidth}
+				height={dimSpecs["attr-height"] * (attributesCount + 1)}
+				rx={dimSpecs["rounded-corner-x"]}
+				ry={dimSpecs["rounded-corner-y"]}
+			/>
 		</clipPath>
 	</defs>
 
@@ -311,42 +321,22 @@
 		tableName={tableData["name"]}
 		width={attrWidth}
 		height={attrHeight}
-		fontSize={dimSpecs["font-size"] * dimSpecs["header-font-scale"]}
-		attrPadding={dimSpecs["attr-padding"]}
+		fontSize={fontSize * headerFontScale}
+		{attrPadding}
 		on:move={handleMove}
 	/>
 
 	{#each Object.entries(tableData["attributes"]) as [key, value], i}
-		<g
-			transform="translate(0 {dimensions.attrHeight * (i + 1)})"
-			class="tbl-attr-container"
-			bind:this={elements["attributes"][i]["group"]}
-		>
-			<rect class="tbl-attr" bind:this={elements["attributes"][i]["rect"]} />
-
-			<text
-				dx="{config['attr-padding']}em"
-				dy={(dimensions.attrHeight + dimensions["fontSize"]) / 2}
-				style="font-size: {dimensions['fontSize']}px;"
-				class="attr-name txt"
-				class:pk={value["primary-key"]}
-				bind:this={elements["attributes"][i]["name"]}
-			>
-				{key}
-			</text>
-
-			<text
-				x={dimensions.attrWidth}
-				dx="{-config['attr-padding']}em"
-				dy={(dimensions.attrHeight + dimensions["fontSize"]) / 2}
-				style="font-size: {dimensions['fontSize']}px;"
-				class="attr-type txt"
-				class:pk-type={value["primary-key"]}
-				bind:this={elements["attributes"][i]["type"]}
-			>
-				{value["type"]}
-			</text>
-		</g>
+		<Attribute
+			attrName={key}
+			attrType={value["type"]}
+			width={attrWidth}
+			height={attrHeight}
+			{fontSize}
+			{attrPadding}
+			isPrimaryKey={value["is-primary-key"]}
+			index={i}
+		/>
 	{/each}
 
 	{#each ["nw", "ne", "se", "sw"] as side}
@@ -363,35 +353,6 @@
 </g>
 
 <style>
-	.tbl-attr {
-		fill: var(--attr-bkg);
-		width: var(--attr-width);
-		height: var(--attr-height);
-	}
-
-	.tbl-attr-container:hover rect {
-		fill: var(--attr-hover);
-	}
-
-	.attr-name {
-		fill: var(--attr-name-color);
-	}
-
-	.attr-type {
-		fill: var(--attr-type-color);
-		text-anchor: end;
-	}
-
-	.pk {
-		font-weight: bold;
-		fill: var(--pk-name-color) !important;
-	}
-
-	.pk-type {
-		font-weight: bold;
-		fill: var(--pk-type-color) !important;
-	}
-
 	.nw-resizer {
 		cursor: nw-resize;
 	}

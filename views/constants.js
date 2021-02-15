@@ -1,0 +1,12 @@
+export const dimSpecs = {
+	"attr-width": 300,
+	"attr-height": 45,
+	"attr-padding": "1.25em",
+	"font-size": 18,
+	"min-attr-width": 100,
+	"min-attr-height": 50,
+	"font-scale": 0.35,
+	"header-font-scale": 1.15,
+	"rounded-corner-x": 5,
+	"rounded-corner-y": 5,
+};

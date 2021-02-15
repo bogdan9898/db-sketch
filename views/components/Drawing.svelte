@@ -12,7 +12,7 @@
 			attributes: {
 				id: {
 					type: "int",
-					"primary-key": true,
+					"is-primary-key": true,
 					"default-value": undefined,
 					nullable: false,
 					increment: true,
@@ -20,7 +20,7 @@
 				},
 				"author-id": {
 					type: "varchar",
-					"primary-key": false,
+					"is-primary-key": false,
 					"default-value": undefined,
 					nullable: false,
 					increment: false,
@@ -28,7 +28,7 @@
 				},
 				name: {
 					type: "varchar",
-					"primary-key": false,
+					"is-primary-key": false,
 					"default-value": undefined,
 					nullable: false,
 					increment: false,
@@ -36,7 +36,7 @@
 				},
 				year: {
 					type: "int",
-					"primary-key": false,
+					"is-primary-key": false,
 					"default-value": undefined,
 					nullable: false,
 					increment: false,
@@ -58,7 +58,7 @@
 		// 	attributes: {
 		// 		id: {
 		// 			type: "int",
-		// 			"primary-key": true,
+		// 			"is-primary-key": true,
 		// 			"default-value": undefined,
 		// 			nullable: false,
 		// 			increment: true,
@@ -66,7 +66,7 @@
 		// 		},
 		// 		name: {
 		// 			type: "varchar",
-		// 			"primary-key": false,
+		// 			"is-primary-key": false,
 		// 			"default-value": undefined,
 		// 			nullable: false,
 		// 			increment: false,
@@ -74,7 +74,7 @@
 		// 		},
 		// 		"born-date": {
 		// 			type: "date",
-		// 			"primary-key": false,
+		// 			"is-primary-key": false,
 		// 			"default-value": undefined,
 		// 			nullable: false,
 		// 			increment: false,
@@ -115,23 +115,12 @@
 			},
 		});
 	});
-
-	const dimSpecs = {
-		"attr-width": 300,
-		"attr-height": 45,
-		"attr-padding": "1.25em",
-		"font-size": 18,
-		"min-attr-width": 100,
-		"min-attr-height": 50,
-		"font-scale": 0.35,
-		"header-font-scale": 1.15,
-	};
 </script>
 
 <svg id="main-svg" width="100%" height="100%" bind:this={svg}>
 	<g id="group-wrapper" bind:this={rootGroup}>
 		{#each data_sample as tableData}
-			<Table {tableData} {rootGroup} {dimSpecs} />
+			<Table {tableData} {rootGroup} />
 		{/each}
 	</g>
 	<rect
