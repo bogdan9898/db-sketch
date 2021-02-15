@@ -4,7 +4,7 @@
 	"description": "Design databases and generate code based on your design using the simple syntax of DSDL (DB-Sketch Design Language)",
 	"version": "0.0.1",
 	"engines": {
-		"vscode": "^1.48.0"
+		"vscode": "^1.53.0"
 	},
 	"categories": [
 		"Other"

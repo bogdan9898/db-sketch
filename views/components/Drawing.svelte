@@ -102,10 +102,7 @@
 		uiUtils.listenZoom(svg, {
 			tick: (event, data) => {
 				let ctm = rootGroup.getCTM();
-				let newTransform = [
-					(data.mousePos[0] - ctm.e) / ctm.a,
-					(data.mousePos[1] - ctm.f) / ctm.d,
-				];
+				let newTransform = [(data.mousePos[0] - ctm.e) / ctm.a, (data.mousePos[1] - ctm.f) / ctm.d];
 				ctm = ctm
 					.translate(...newTransform)
 					.scale(Math.sign(event.deltaY) < 0 ? 1.25 : 0.8)
@@ -120,23 +117,39 @@
 	});
 </script>
 
+<svg id="main-svg" width="100%" height="100%" bind:this={svg}>
+	<g id="group-wrapper" bind:this={rootGroup}>
+		{#each data_sample as tableData}
+			<Table {tableData} {rootGroup} />
+		{/each}
+	</g>
+	<rect
+		class="resizeIndicator"
+		visibility={resizeIndicatorIsVisible ? "visible" : "hidden"}
+		x={$resizeIndicatorDataStore.x}
+		y={$resizeIndicatorDataStore.y}
+		width={$resizeIndicatorDataStore.width}
+		height={$resizeIndicatorDataStore.height}
+	/>
+</svg>
+
 <style>
 	/* https://coolors.co/0081a7-00afb9-fdfcdc-fed9b7-f07167 */
 	/* https://coolors.co/f72585-b5179e-7209b7-560bad-480ca8-3a0ca3-3f37c9-4361ee-4895ef-4cc9f0 */
 	:global(:root) {
-		--header-bkg: #f07167;
-		--attr-bkg: #fdfcdc;
-		--attr-hover: #fed9b7;
+		--bck-color: var(--vscde-editor-background);
+		--header-bkg: var(--vscode-dropdown-listBackground);
+		--attr-bkg: var(--vscode-dropdown-foreground);
+		--attr-hover: var(--vscode-dropdown-listBackground);
 		--attr-width: 300px;
 		--attr-height: 45px;
-		--attr-name-color: #00afb9;
-		--attr-type-color: #00afb9;
+		--attr-name-color: var(--vscode-textPreformat-foreground);
+		--attr-type-color: var(--vscode-textPreformat-foreground);
 		--font-size: 18px;
-		--pk-name-color: #0081a7;
-		--pk-type-color: #0081a7;
-		--tbl-name-color: #fdfcdc;
-		--resize-indicator-stroke-color: #0081a7;
-		--bck-color: #00afb9; /* #292a2b */
+		--pk-name-color: var(--vscode-textLink-foreground);
+		--pk-type-color: var(--vscode-textLink-foreground);
+		--tbl-name-color: var(--vscode-textLink-foreground);
+		--resize-indicator-stroke-color: var(--vscode-focusBorder);
 	}
 
 	:global(body) {
@@ -162,18 +175,3 @@
 	@media (min-width: 640px) {
 	}
 </style>
-
-<svg id="main-svg" width="100%" height="100%" bind:this={svg}>
-	<g id="group-wrapper" bind:this={rootGroup}>
-		{#each data_sample as tableData}
-			<Table {tableData} {rootGroup} />
-		{/each}
-	</g>
-	<rect
-		class="resizeIndicator"
-		visibility={resizeIndicatorIsVisible ? 'visible' : 'hidden'}
-		x={$resizeIndicatorDataStore.x}
-		y={$resizeIndicatorDataStore.y}
-		width={$resizeIndicatorDataStore.width}
-		height={$resizeIndicatorDataStore.height} />
-</svg>
