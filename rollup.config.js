@@ -57,6 +57,7 @@ export default fs.readdirSync(path.join(__dirname, "views", "pages")).map((input
 			// consult the documentation for details:
 			// https://github.com/rollup/plugins/tree/master/packages/commonjs
 			resolve({
+				rootDir: path.join(__dirname, "views"),
 				browser: true,
 				dedupe: ["svelte"],
 			}),

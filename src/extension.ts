@@ -3,7 +3,7 @@ import { DrawingPanel } from "./DrawingPanel";
 
 export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
-		vscode.commands.registerCommand("db-sketch.helloWorld", () => {
+		vscode.commands.registerCommand("db-sketch.generateDrawing", () => {
 			DrawingPanel.createOrShow(context.extensionUri);
 		})
 	);
