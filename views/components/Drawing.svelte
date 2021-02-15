@@ -124,7 +124,7 @@
 		"min-attr-width": 100,
 		"min-attr-height": 50,
 		"font-scale": 0.35,
-		"header-font-scale": 1.1,
+		"header-font-scale": 1.15,
 	};
 </script>
 

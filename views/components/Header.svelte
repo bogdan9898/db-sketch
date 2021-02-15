@@ -42,8 +42,6 @@
 
 	.tbl-header {
 		fill: var(--header-bkg);
-		width: var(--attr-width);
-		height: var(--attr-height);
 	}
 
 	.tbl-name {
