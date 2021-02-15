@@ -2,10 +2,10 @@ function listenMove(el, callbacks) {
 	el.addEventListener("mousedown", (event) => startMove(event, callbacks));
 }
 
-function listenResize(corners, callbacks) {
-	for (let cornerName in corners) {
-		corners[cornerName].addEventListener("mousedown", (event) => startResize(event, callbacks, { cornerName }));
-	}
+function listenResize(corner, side, callbacks) {
+	// for (let cornerSide in corners) {
+	corner.addEventListener("mousedown", (event) => startResize(event, callbacks, { cornerSide: side }));
+	// }
 }
 
 let mousePos = [0, 0];
@@ -67,7 +67,7 @@ function startResize(event, callbacks, tmpData) {
 			x: event.pageX,
 			y: event.pageY,
 		},
-		cornerName: tmpData.cornerName,
+		cornerSide: tmpData.cornerSide,
 		// keep refs to handlers so they can be removed as event listeners
 		tickResizeHandler: (event) => tickResize(event, callbacks, tmpData),
 		stopResizeHandler: (event) => stopResize(event, callbacks, tmpData),
@@ -75,14 +75,14 @@ function startResize(event, callbacks, tmpData) {
 	document.body.addEventListener("mousemove", tmpData.tickResizeHandler);
 	document.body.addEventListener("mouseup", tmpData.stopResizeHandler);
 
-	callbacks.start && callbacks.start(event, { prevCoords: tmpData.prevCoords, cornerName: tmpData.cornerName });
+	callbacks.start && callbacks.start(event, { prevCoords: tmpData.prevCoords, cornerSide: tmpData.cornerSide });
 }
 
 function tickResize(event, callbacks, tmpData) {
 	event.preventDefault();
 	event.stopPropagation();
 
-	callbacks.tick && callbacks.tick(event, { prevCoords: tmpData.prevCoords, cornerName: tmpData.cornerName });
+	callbacks.tick && callbacks.tick(event, { prevCoords: tmpData.prevCoords, cornerSide: tmpData.cornerSide });
 
 	// prevCords are updated inside callbacks
 	// tmpData.prevCoords.x = event.pageX;
@@ -97,7 +97,7 @@ function stopResize(event, callbacks, tmpData) {
 	document.body.removeEventListener("mousemove", tmpData.tickResizeHandler);
 	document.body.removeEventListener("mouseup", tmpData.stopResizeHandler);
 
-	callbacks.stop && callbacks.stop(event, { prevCoords: tmpData.prevCoords, cornerName: tmpData.cornerName });
+	callbacks.stop && callbacks.stop(event, { prevCoords: tmpData.prevCoords, cornerSide: tmpData.cornerSide });
 }
 
 function tickZoom(event, callbacks, tmpData) {
