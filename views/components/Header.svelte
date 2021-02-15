@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import { createEventDispatcher } from "svelte";
+	import uiUtils from "../uiUtils";
 
 	export let tableName;
 	export let width;
