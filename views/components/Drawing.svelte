@@ -115,12 +115,23 @@
 			},
 		});
 	});
+
+	const dimSpecs = {
+		"attr-width": 300,
+		"attr-height": 45,
+		"attr-padding": "1.25em",
+		"font-size": 18,
+		"min-attr-width": 100,
+		"min-attr-height": 50,
+		"font-scale": 0.35,
+		"header-font-scale": 1.1,
+	};
 </script>
 
 <svg id="main-svg" width="100%" height="100%" bind:this={svg}>
 	<g id="group-wrapper" bind:this={rootGroup}>
 		{#each data_sample as tableData}
-			<Table {tableData} {rootGroup} />
+			<Table {tableData} {rootGroup} {dimSpecs} />
 		{/each}
 	</g>
 	<rect
@@ -155,6 +166,12 @@
 	:global(body) {
 		padding: 0px;
 		overflow: hidden; /* disable scrollbar */
+	}
+
+	:global(.txt) {
+		font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
+			sans-serif;
+		user-select: none;
 	}
 
 	#main-svg {
