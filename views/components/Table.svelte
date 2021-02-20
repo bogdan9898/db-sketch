@@ -7,7 +7,6 @@
 
 	export let tableData;
 	export let rootGroup;
-	const config = dimSpecs; // TO BE DELETED!
 
 	const attributesCount = Object.entries(tableData["attributes"]).length;
 
@@ -28,20 +27,6 @@
 	$: headerFontScale = dimSpecs["header-font-scale"];
 	$: attrPadding = dimSpecs["attr-padding"];
 
-	// let dimensions = {
-	// 	// TO BE DELETED!
-	// 	attrWidth: config["attr-width"],
-	// 	attrHeight: config["attr-height"],
-	// 	totalHeight: config["attr-height"] * (attributesCount + 1),
-	// 	headerFontSize: config["attr-height"] * config["header-font-scale"],
-	// 	fontSize: config["attr-height"] * config["font-scale"],
-	// };
-
-	// let constraints = {
-	// 	minAttrWidth: dimSpecs["min-attr-width"],
-	// 	minAttrHeight: dimSpecs["min-attr-height"],
-	// };
-
 	let resizeIndicatorData = {};
 	resizeIndicatorDataStore.subscribe((data) => {
 		resizeIndicatorData = { ...data };
@@ -59,7 +44,6 @@
 	const handleResize = (ev) => {
 		const ctm = container.getCTM();
 		const parentCtm = rootGroup.getCTM();
-		// apply the actual resize
 		switch (ev.detail.side) {
 			case "nw": {
 				const newWidth = parseFloat(resizeIndicatorData.width) / ctm.a;
@@ -69,24 +53,6 @@
 				origin = [newX, newY];
 				attrWidth = newWidth;
 				attrHeight = newHeight;
-				// dimensions.totalHeight = newHeight * (attributesCount + 1);
-				// dimensions.headerFontSize = newHeight * config["header-font-scale"];
-				// dimensions.fontSize = newHeight * config["font-scale"];
-				// elements.header.style.width = newWidth;
-				// elements.header.style.height = newHeight;
-				// elements.tableName.style.fontSize = dimensions.headerFontSize;
-				// let i = 1;
-				// for (let attribute of elements.attributes) {
-				// 	attribute.rect.style.width = newWidth;
-				// 	attribute.rect.style.height = newHeight;
-				// 	attribute.name.style.width = newWidth;
-				// 	attribute.name.style.height = newHeight;
-				// 	attribute.name.style.fontSize = dimensions.fontSize;
-				// 	attribute.type.style.width = newWidth;
-				// 	attribute.type.style.height = newHeight;
-				// 	attribute.type.style.fontSize = dimensions.fontSize;
-				// 	i++;
-				// }
 				break;
 			}
 			case "ne": {
@@ -96,24 +62,6 @@
 				origin = [origin[0], newY];
 				attrWidth = newWidth;
 				attrHeight = newHeight;
-				// dimensions.totalHeight = newHeight * (attributesCount + 1);
-				// dimensions.headerFontSize = newHeight * config["header-font-scale"];
-				// dimensions.fontSize = newHeight * config["font-scale"];
-				// elements.header.style.width = newWidth;
-				// elements.header.style.height = newHeight;
-				// elements.tableName.style.fontSize = dimensions.headerFontSize;
-				// let i = 1;
-				// for (let attribute of elements.attributes) {
-				// 	attribute.rect.style.width = newWidth;
-				// 	attribute.rect.style.height = newHeight;
-				// 	attribute.name.style.width = newWidth;
-				// 	attribute.name.style.height = newHeight;
-				// 	attribute.name.style.fontSize = dimensions.fontSize;
-				// 	attribute.type.style.width = newWidth;
-				// 	attribute.type.style.height = newHeight;
-				// 	attribute.type.style.fontSize = dimensions.fontSize;
-				// 	i++;
-				// }
 				break;
 			}
 			case "se": {
@@ -121,24 +69,6 @@
 				const newHeight = parseFloat(resizeIndicatorData.height) / ctm.d / (attributesCount + 1);
 				attrWidth = newWidth;
 				attrHeight = newHeight;
-				// dimensions.totalHeight = newHeight * (attributesCount + 1);
-				// dimensions.headerFontSize = newHeight * config["header-font-scale"];
-				// dimensions.fontSize = newHeight * config["font-scale"];
-				// elements.header.style.width = newWidth;
-				// elements.header.style.height = newHeight;
-				// elements.tableName.style.fontSize = dimensions.headerFontSize;
-				// let i = 1;
-				// for (let attribute of elements.attributes) {
-				// 	attribute.rect.style.width = newWidth;
-				// 	attribute.rect.style.height = newHeight;
-				// 	attribute.name.style.width = newWidth;
-				// 	attribute.name.style.height = newHeight;
-				// 	attribute.name.style.fontSize = dimensions.fontSize;
-				// 	attribute.type.style.width = newWidth;
-				// 	attribute.type.style.height = newHeight;
-				// 	attribute.type.style.fontSize = dimensions.fontSize;
-				// 	i++;
-				// }
 				break;
 			}
 			case "sw": {
@@ -148,24 +78,6 @@
 				origin = [newX, origin[1]];
 				attrWidth = newWidth;
 				attrHeight = newHeight;
-				// dimensions.totalHeight = newHeight * (attributesCount + 1);
-				// dimensions.headerFontSize = newHeight * config["header-font-scale"];
-				// dimensions.fontSize = newHeight * config["font-scale"];
-				// elements.header.style.width = newWidth;
-				// elements.header.style.height = newHeight;
-				// elements.tableName.style.fontSize = dimensions.headerFontSize;
-				// let i = 1;
-				// for (let attribute of elements.attributes) {
-				// 	attribute.rect.style.width = newWidth;
-				// 	attribute.rect.style.height = newHeight;
-				// 	attribute.name.style.width = newWidth;
-				// 	attribute.name.style.height = newHeight;
-				// 	attribute.name.style.fontSize = dimensions.fontSize;
-				// 	attribute.type.style.width = newWidth;
-				// 	attribute.type.style.height = newHeight;
-				// 	attribute.type.style.fontSize = dimensions.fontSize;
-				// 	i++;
-				// }
 				break;
 			}
 		}
