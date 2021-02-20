@@ -3,9 +3,7 @@ function listenMove(el, callbacks) {
 }
 
 function listenResize(corner, side, callbacks) {
-	// for (let cornerSide in corners) {
 	corner.addEventListener("mousedown", (event) => startResize(event, callbacks, { cornerSide: side }));
-	// }
 }
 
 let mousePos = [0, 0];
