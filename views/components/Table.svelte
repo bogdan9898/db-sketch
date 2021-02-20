@@ -1,6 +1,6 @@
 <script>
 	import { dimSpecs } from "../constants.js";
-	import { resizeIndicatorDataStore } from "../store.js";
+	import { resizeIndicatorDataStore, tablesDataStore } from "../stores.js";
 	import Header from "./Header.svelte";
 	import Attribute from "./Attribute.svelte";
 	import Corner from "./Corner.svelte";
@@ -9,6 +9,7 @@
 	export let rootGroup;
 
 	const attributesCount = Object.entries(tableData["attributes"]).length;
+	const thisTableDataStore = tablesDataStore[tableData["name"]];
 
 	$: origin = tableData["table-metadata"].translate;
 	let container;
@@ -26,6 +27,12 @@
 	$: fontSize = dimSpecs["font-size"];
 	$: headerFontScale = dimSpecs["header-font-scale"];
 	$: attrPadding = dimSpecs["attr-padding"];
+
+	$: thisTableDataStore.update((state) => {
+		state.attrWidth = attrWidth;
+		state.attrHeight = attrHeight;
+		return state;
+	});
 
 	let resizeIndicatorData = {};
 	resizeIndicatorDataStore.subscribe((data) => {

@@ -1,15 +1,17 @@
 <!-- todo: include vs code css and remove my own css theme -->
 <script>
 	import Table from "./Table.svelte";
+	import Relation from "./Relation.svelte";
 	import { onMount } from "svelte";
+	import { writable } from "svelte/store";
 	import uiUtils from "../uiUtils.js";
-	import { resizeIndicatorDataStore } from "../store.js";
+	import { resizeIndicatorDataStore, tablesDataStore } from "../stores.js";
+	import { dimSpecs } from "../constants.js";
 
 	// todo: receive data from parser
-	const data_sample = [
-		{
-			name: "books",
-			attributes: {
+	const data_sample = {
+		tables: {
+			books: {
 				id: {
 					type: "int",
 					"is-primary-key": true,
@@ -43,19 +45,7 @@
 					unique: false,
 				},
 			},
-			references: [
-				// foreign keys
-				{
-					type: "one-to-one", // many-to-one, one-to-one, one-to-many
-					"from-attributes": ["author-id"], // composite or simple foreign key
-					"to-table": "author",
-					"to-attributes": ["id"], // composite or simple primary key
-				},
-			],
-		},
-		{
-			name: "author",
-			attributes: {
+			author: {
 				id: {
 					type: "int",
 					"is-primary-key": true,
@@ -82,12 +72,24 @@
 				},
 			},
 		},
-	];
+		references: {
+			// foreign keys -> must point to primary keys (or composite key containing primary key)
+			"books->author": {
+				type: "one-to-one", // many-to-one, one-to-one, one-to-many
+				from: ["author-id"], // composite or simple foreign key
+				to: ["id"], // composite or simple primary key -> MUST CONTAIN PRIMARY KEY
+			},
+		},
+	};
 
-	for (let data of data_sample) {
-		data["table-metadata"] = {
-			translate: [10, 10], // todo: generate spawn coords
-		};
+	let tablesOrigins = {};
+	for (let name of Object.keys(data_sample["tables"])) {
+		tablesOrigins[name] = [10, 10]; // todo: generate spawn coords
+		tablesDataStore[name] = writable({
+			attrWidth: dimSpecs["attr-width"],
+			attrHeight: dimSpecs["attr-height"],
+			attrs: [Object.keys(data_sample["tables"][name])],
+		});
 	}
 
 	let rootGroup;
@@ -134,8 +136,13 @@
 
 <svg id="main-svg" width="100%" height="100%" bind:this={svg}>
 	<g id="group-wrapper" bind:this={rootGroup}>
-		{#each data_sample as tableData}
-			<Table {tableData} {rootGroup} />
+		{#each Object.entries(data_sample.tables) as [name, attributes]}
+			<Table tableData={{ name, attributes, "table-metadata": { translate: tablesOrigins[name] } }} {rootGroup} />
+		{/each}
+
+		<!-- draw paths  -->
+		{#each Object.entries(data_sample["references"]) as [tablesNames, info]}
+			<Relation pathData={{ tablesNames, info }} />
 		{/each}
 	</g>
 	<rect

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from "svelte";
 	import uiUtils from "../uiUtils";
-	import { resizeIndicatorDataStore } from "../store.js";
+	import { resizeIndicatorDataStore } from "../stores.js";
 	import { dimSpecs } from "../constants.js";
 	import { createEventDispatcher } from "svelte";
 
