@@ -53,35 +53,35 @@
 				},
 			],
 		},
-		// {
-		// 	name: "author",
-		// 	attributes: {
-		// 		id: {
-		// 			type: "int",
-		// 			"is-primary-key": true,
-		// 			"default-value": undefined,
-		// 			nullable: false,
-		// 			increment: true,
-		// 			unique: true,
-		// 		},
-		// 		name: {
-		// 			type: "varchar",
-		// 			"is-primary-key": false,
-		// 			"default-value": undefined,
-		// 			nullable: false,
-		// 			increment: false,
-		// 			unique: false,
-		// 		},
-		// 		"born-date": {
-		// 			type: "date",
-		// 			"is-primary-key": false,
-		// 			"default-value": undefined,
-		// 			nullable: false,
-		// 			increment: false,
-		// 			unique: false,
-		// 		},
-		// 	},
-		// },
+		{
+			name: "author",
+			attributes: {
+				id: {
+					type: "int",
+					"is-primary-key": true,
+					"default-value": undefined,
+					nullable: false,
+					increment: true,
+					unique: true,
+				},
+				name: {
+					type: "varchar",
+					"is-primary-key": false,
+					"default-value": undefined,
+					nullable: false,
+					increment: false,
+					unique: false,
+				},
+				"born-date": {
+					type: "date",
+					"is-primary-key": false,
+					"default-value": undefined,
+					nullable: false,
+					increment: false,
+					unique: false,
+				},
+			},
+		},
 	];
 
 	for (let data of data_sample) {
@@ -102,11 +102,26 @@
 		uiUtils.listenZoom(svg, {
 			tick: (event, data) => {
 				let ctm = rootGroup.getCTM();
-				let newTransform = [(data.mousePos[0] - ctm.e) / ctm.a, (data.mousePos[1] - ctm.f) / ctm.d];
+				let newTransform = [(data.mousePos.x - ctm.e) / ctm.a, (data.mousePos.y - ctm.f) / ctm.d];
 				ctm = ctm
 					.translate(...newTransform)
 					.scale(Math.sign(event.deltaY) < 0 ? 1.25 : 0.8)
 					.translate(-newTransform[0], -newTransform[1]);
+				rootGroup.setAttributeNS(
+					null,
+					"transform",
+					`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
+				);
+			},
+		});
+
+		uiUtils.listenPan(svg, {
+			tick: (event, data) => {
+				let ctm = rootGroup.getCTM();
+				ctm = ctm.translate(
+					(event.pageX - data.prevCoords.x) / ctm.a,
+					(event.pageY - data.prevCoords.y) / ctm.d
+				);
 				rootGroup.setAttributeNS(
 					null,
 					"transform",
@@ -141,11 +156,11 @@
 		--header-bkg: var(--vscode-dropdown-listBackground);
 		--attr-bkg: var(--vscode-dropdown-foreground);
 		--attr-hover: var(--vscode-dropdown-listBackground);
-		--attr-width: 300px;
-		--attr-height: 45px;
+		/* --attr-width: 300px; */
+		/* --attr-height: 45px; */
 		--attr-name-color: var(--vscode-textPreformat-foreground);
 		--attr-type-color: var(--vscode-textPreformat-foreground);
-		--font-size: 18px;
+		/* --font-size: 18px; */
 		--pk-name-color: var(--vscode-textLink-foreground);
 		--pk-type-color: var(--vscode-textLink-foreground);
 		--tbl-name-color: var(--vscode-textLink-foreground);
@@ -168,6 +183,10 @@
 		height: 100%;
 		white-space: pre;
 		background: var(--bck-color);
+	}
+
+	#main-svg:active {
+		cursor: move;
 	}
 
 	.resizeIndicator {

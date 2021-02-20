@@ -84,9 +84,13 @@
 	};
 </script>
 
-<g bind:this={container} transform="translate({origin[0]} {origin[1]})" clip-path="url(#round-corners)">
+<g
+	bind:this={container}
+	transform="translate({origin[0]} {origin[1]})"
+	clip-path="url(#round-corners-{tableData['name']})"
+>
 	<defs>
-		<clipPath id="round-corners">
+		<clipPath id="round-corners-{tableData['name']}">
 			<rect
 				width={attrWidth}
 				height={attrHeight * (attributesCount + 1)}

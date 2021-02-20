@@ -6,18 +6,21 @@ function listenResize(corner, side, callbacks) {
 	corner.addEventListener("mousedown", (event) => startResize(event, callbacks, { cornerSide: side }));
 }
 
-let mousePos = [0, 0];
+let mousePos = { x: 0, y: 0 };
 function listenZoom(el, callbacks) {
 	el.addEventListener("wheel", (event) => tickZoom(event, callbacks, { mousePos }));
 	window.addEventListener("mousemove", (event) => {
-		mousePos = [event.pageX, event.pageY];
+		mousePos.x = event.pageX;
+		mousePos.y = event.pageY;
 	});
 }
 
-function listenPan(el, callbacks) {}
+function listenPan(el, callbacks) {
+	el.addEventListener("mousedown", (event) => startPan(event, callbacks));
+}
 
 function startMove(event, callbacks) {
-	// event.preventDefault(); // THIS HAS TO BE COMMENTED! otherwise the pointer doesnt change to "grabbed"
+	event.preventDefault(); // THIS HAS TO BE COMMENTED! otherwise the pointer might not change to "grabbed"
 	event.stopPropagation();
 
 	let tmpData = {
@@ -82,7 +85,7 @@ function tickResize(event, callbacks, tmpData) {
 
 	callbacks.tick && callbacks.tick(event, { prevCoords: tmpData.prevCoords, cornerSide: tmpData.cornerSide });
 
-	// prevCords are updated inside callbacks
+	// prevCords are updated inside callbacks for control over width/height constraints
 	// tmpData.prevCoords.x = event.pageX;
 	// tmpData.prevCoords.y = event.pageY;
 }
@@ -91,7 +94,7 @@ function stopResize(event, callbacks, tmpData) {
 	event.preventDefault();
 	event.stopPropagation();
 
-	// remove event listeners in order for other tables to be dragged properly
+	// remove event listeners in order for other tables to be resized properly
 	document.body.removeEventListener("mousemove", tmpData.tickResizeHandler);
 	document.body.removeEventListener("mouseup", tmpData.stopResizeHandler);
 
@@ -103,6 +106,49 @@ function tickZoom(event, callbacks, tmpData) {
 	event.stopPropagation();
 
 	callbacks.tick && callbacks.tick(event, { mousePos: tmpData.mousePos });
+}
+
+function startPan(event, callbacks) {
+	if (event.target.id !== "main-svg") {
+		return;
+	}
+	event.preventDefault();
+	event.stopPropagation();
+
+	let tmpData = {
+		prevCoords: {
+			x: event.pageX,
+			y: event.pageY,
+		},
+		// keep refs to handlers so they can be removed as event listeners
+		tickPanHandler: (event) => tickPan(event, callbacks, tmpData),
+		stopPanHandler: (event) => stopPan(event, callbacks, tmpData),
+	};
+	document.body.addEventListener("mousemove", tmpData.tickPanHandler);
+	document.body.addEventListener("mouseup", tmpData.stopPanHandler);
+
+	callbacks.start && callbacks.start(event, { prevCoords: tmpData.prevCoords });
+}
+
+function tickPan(event, callbacks, tmpData) {
+	event.preventDefault();
+	event.stopPropagation();
+
+	callbacks.tick && callbacks.tick(event, { prevCoords: tmpData.prevCoords });
+
+	tmpData.prevCoords.x = event.pageX;
+	tmpData.prevCoords.y = event.pageY;
+}
+
+function stopPan(event, callbacks, tmpData) {
+	event.preventDefault();
+	event.stopPropagation();
+
+	// remove event listeners in order for other 'pans' to work properly
+	document.body.removeEventListener("mousemove", tmpData.tickPanHandler);
+	document.body.removeEventListener("mouseup", tmpData.stopPanHandler);
+
+	callbacks.stop && callbacks.stop(event, { prevCoords: tmpData.prevCoords });
 }
 
 export default {

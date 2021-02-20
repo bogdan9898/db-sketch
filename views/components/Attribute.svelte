@@ -39,6 +39,10 @@
 		fill: var(--attr-hover);
 	}
 
+	.tbl-attr-container:hover {
+		cursor: pointer;
+	}
+
 	.tbl-attr {
 		fill: var(--attr-bkg);
 	}
