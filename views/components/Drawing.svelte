@@ -140,13 +140,12 @@
 
 <svg id="main-svg" width="100%" height="100%" bind:this={svg}>
 	<g id="group-wrapper" bind:this={rootGroup}>
-		{#each Object.entries(data_sample.tables) as [name, attributes]}
-			<Table tableData={{ name, attributes, "table-metadata": { translate: tablesOrigins[name] } }} {rootGroup} />
-		{/each}
-
-		<!-- todo: swap draw order between Table and Realation -->
 		{#each Object.entries(data_sample["references"]) as [tablesNames, info]}
 			<Relation pathData={{ tablesNames, info }} />
+		{/each}
+
+		{#each Object.entries(data_sample.tables) as [name, attributes]}
+			<Table tableData={{ name, attributes, "table-metadata": { translate: tablesOrigins[name] } }} {rootGroup} />
 		{/each}
 	</g>
 	<rect
@@ -176,6 +175,8 @@
 		--pk-type-color: var(--vscode-textLink-foreground);
 		--tbl-name-color: var(--vscode-textLink-foreground);
 		--resize-indicator-stroke-color: var(--vscode-focusBorder);
+		--rel-stroke-color: var(--vscode-dropdown-foreground);
+		--rel-active-stroke-color: var(--vscode-tab-activeBorder);
 	}
 
 	:global(body) {
@@ -184,8 +185,9 @@
 	}
 
 	:global(.txt) {
-		font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
-			sans-serif;
+		/* font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva, Verdana,
+			sans-serif; */
+		font-family: var(--vscode-editor-font-family);
 		user-select: none;
 	}
 
@@ -202,8 +204,5 @@
 		stroke-width: 4px;
 		stroke-dasharray: 8px;
 		stroke-linecap: round;
-	}
-
-	@media (min-width: 640px) {
 	}
 </style>
