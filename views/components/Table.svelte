@@ -97,13 +97,21 @@
 		}
 	};
 
+	const handleHighlight = (event, action) => {
+		dispatch(action, {
+			source: "table",
+			table: tableData["name"],
+			attr: event.detail.attr,
+		});
+	};
+
 	onMount(() => {
 		dispatch("registerNotifier", {
 			target: "table",
 			key: tableData["name"],
-			callback: (data) => {
+			callback: async (data) => {
 				switch (data.type) {
-					case "hightlightStart": {
+					case "highlightStart": {
 						for (const attr of data.attrs) {
 							attrHighlightStatus[attr] = true;
 						}
@@ -113,6 +121,10 @@
 						for (const attr of data.attrs) {
 							attrHighlightStatus[attr] = false;
 						}
+						break;
+					}
+					default: {
+						console.error(`got unkown action: ${data.type}`);
 						break;
 					}
 				}
@@ -157,6 +169,8 @@
 			isPrimaryKey={value["is-primary-key"]}
 			index={i}
 			highlight={attrHighlightStatus[key]}
+			on:highlightStart={(event) => handleHighlight(event, "highlightStart")}
+			on:highlightStop={(event) => handleHighlight(event, "highlightStop")}
 		/>
 	{/each}
 	{#each ["nw", "ne", "se", "sw"] as side}

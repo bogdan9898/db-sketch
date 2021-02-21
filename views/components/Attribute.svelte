@@ -1,4 +1,6 @@
 <script>
+	import { createEventDispatcher } from "svelte";
+
 	export let attrName;
 	export let attrType;
 	export let width;
@@ -9,11 +11,23 @@
 	export let index;
 	export let highlight;
 
-	$: console.log(`${attrName} ${highlight}`);
+	const dispatch = createEventDispatcher();
+
+	const handleMouseEvent = (_event, action) => {
+		dispatch(action, {
+			source: "table",
+			attr: attrName,
+		});
+	};
 </script>
 
-<g class="tbl-attr-container" transform="translate(0 {height * (index + 1)})">
-	<rect class="tbl-attr" class:rect-active={highlight == true} {width} {height} />
+<g
+	class="tbl-attr-container"
+	transform="translate(0 {height * (index + 1)})"
+	on:mouseenter={(event) => handleMouseEvent(event, "highlightStart")}
+	on:mouseleave={(event) => handleMouseEvent(event, "highlightStop")}
+>
+	<rect class="tbl-attr" class:rect-active={highlight === true} {width} {height} />
 
 	<text
 		dx={attrPadding}

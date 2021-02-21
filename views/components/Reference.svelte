@@ -7,6 +7,7 @@
 
 	const dispatch = createEventDispatcher();
 	let pathCommands = "";
+	let highlight = false;
 	// t1 = table containing foreign keys
 	// t2 = table to which t1 is pointing
 
@@ -68,10 +69,32 @@
 	onMount(() => {
 		dispatch("registerNotifier", {
 			target: "ref",
-			key: [t1Name, t2Name],
-			callback: (data) => {
-				console.log("data:");
-				console.log(data);
+			keys: [
+				...pathData.info["from"].map((el) => t1Name + "->" + el),
+				...pathData.info["to"].map((el) => t2Name + "->" + el),
+			],
+			callback: async (data) => {
+				switch (data.type) {
+					case "highlightStart": {
+						highlight = true;
+						break;
+					}
+					case "highlightStop": {
+						highlight = false;
+						break;
+					}
+					default: {
+						console.error(`got unkown action: ${data.type}`);
+						break;
+					}
+				}
+				dispatch(data.type, {
+					source: "ref",
+					tables: [t1Name, t2Name],
+					from: pathData.info["from"],
+					to: pathData.info["to"],
+				});
+				// handleMouseEvent(undefined, data.type);
 			},
 		});
 	});
@@ -88,8 +111,9 @@
 
 <path
 	class="ref"
+	class:ref-active={highlight === true}
 	d={pathCommands}
-	on:mouseenter={(event) => handleMouseEvent(event, "hightlightStart")}
+	on:mouseenter={(event) => handleMouseEvent(event, "highlightStart")}
 	on:mouseleave={(event) => handleMouseEvent(event, "highlightStop")}
 />
 
@@ -98,6 +122,12 @@
 		fill: none;
 		stroke: var(--ref-stroke-color);
 		stroke-width: 2;
+	}
+
+	.ref-active {
+		fill: none;
+		stroke: var(--ref-active-stroke-color);
+		stroke-width: 4;
 	}
 
 	.ref:hover {

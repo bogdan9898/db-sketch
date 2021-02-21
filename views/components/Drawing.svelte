@@ -139,14 +139,14 @@
 
 	let notifiers = { table: {}, ref: {} };
 	const registerNotifier = (event) => {
-		const { target, key, callback } = event.detail;
+		const { target, callback } = event.detail;
 		switch (target) {
 			case "table": {
-				notifiers[target][key] = callback;
+				notifiers[target][event.detail.key] = callback;
 				break;
 			}
 			case "ref": {
-				for (const el of key) {
+				for (const el of event.detail.keys) {
 					if (!notifiers[target][el]) {
 						notifiers[target][el] = [];
 					}
@@ -161,7 +161,12 @@
 		const { source } = event.detail;
 		switch (source) {
 			case "table": {
-				// todo: WIP
+				const callbacks = notifiers["ref"][event.detail.table + "->" + event.detail.attr];
+				if (callbacks) {
+					for (const cb of callbacks) {
+						cb({ type: action });
+					}
+				}
 				break;
 			}
 			case "ref": {
@@ -178,6 +183,10 @@
 				});
 				break;
 			}
+			default: {
+				console.error(`got unkown source: ${source}`);
+				break;
+			}
 		}
 	};
 </script>
@@ -188,7 +197,7 @@
 			<Reference
 				pathData={{ tablesNames, info }}
 				on:registerNotifier|once={registerNotifier}
-				on:hightlightStart={(event) => handleHighlight(event, "hightlightStart")}
+				on:highlightStart={(event) => handleHighlight(event, "highlightStart")}
 				on:highlightStop={(event) => handleHighlight(event, "hightlightStop")}
 			/>
 		{/each}
@@ -198,6 +207,8 @@
 				tableData={{ name, attributes, "table-metadata": { translate: tablesOrigins[name] } }}
 				{rootGroup}
 				on:registerNotifier|once={registerNotifier}
+				on:highlightStart={(event) => handleHighlight(event, "highlightStart")}
+				on:highlightStop={(event) => handleHighlight(event, "highlightStop")}
 			/>
 		{/each}
 	</g>
