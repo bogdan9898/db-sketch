@@ -1,7 +1,7 @@
 <!-- todo: include vs code css and remove my own css theme -->
 <script>
 	import Table from "./Table.svelte";
-	import Relation from "./Relation.svelte";
+	import Reference from "./Reference.svelte";
 	import { onMount } from "svelte";
 	import { writable } from "svelte/store";
 	import uiUtils from "../uiUtils.js";
@@ -136,16 +136,69 @@
 			},
 		});
 	});
+
+	let notifiers = { table: {}, ref: {} };
+	const registerNotifier = (event) => {
+		const { target, key, callback } = event.detail;
+		switch (target) {
+			case "table": {
+				notifiers[target][key] = callback;
+				break;
+			}
+			case "ref": {
+				for (const el of key) {
+					if (!notifiers[target][el]) {
+						notifiers[target][el] = [];
+					}
+					notifiers[target][el].push(callback);
+				}
+				break;
+			}
+		}
+	};
+
+	const handleHighlight = (event, action) => {
+		const { source } = event.detail;
+		switch (source) {
+			case "table": {
+				// todo: WIP
+				break;
+			}
+			case "ref": {
+				const { tables, from, to } = event.detail;
+				let callback = notifiers["table"][tables[0]];
+				callback({
+					type: action,
+					attrs: from,
+				});
+				callback = notifiers["table"][tables[1]];
+				callback({
+					type: action,
+					attrs: to,
+				});
+				break;
+			}
+		}
+	};
 </script>
 
 <svg id="main-svg" width="100%" height="100%" bind:this={svg}>
 	<g id="group-wrapper" bind:this={rootGroup}>
 		{#each Object.entries(data_sample["references"]) as [tablesNames, info]}
-			<Relation pathData={{ tablesNames, info }} />
+			<Reference
+				pathData={{ tablesNames, info }}
+				on:registerNotifier|once={registerNotifier}
+				on:hightlightStart={(event) => handleHighlight(event, "hightlightStart")}
+				on:highlightStop={(event) => handleHighlight(event, "hightlightStop")}
+			/>
 		{/each}
 
 		{#each Object.entries(data_sample.tables) as [name, attributes]}
-			<Table tableData={{ name, attributes, "table-metadata": { translate: tablesOrigins[name] } }} {rootGroup} />
+			<Table
+				tableData={{ name, attributes, "table-metadata": { translate: tablesOrigins[name] } }}
+				{rootGroup}
+				on:registerNotifier|once={registerNotifier}
+			/>
 		{/each}
 	</g>
 	<rect
@@ -165,18 +218,19 @@
 		--bck-color: var(--vscde-editor-background);
 		--header-bkg: var(--vscode-dropdown-listBackground);
 		--attr-bkg: var(--vscode-dropdown-foreground);
-		--attr-hover: var(--vscode-dropdown-listBackground);
+		--attr-hover: var(--vscode-list-focusBackground);
 		/* --attr-width: 300px; */
 		/* --attr-height: 45px; */
 		--attr-name-color: var(--vscode-textPreformat-foreground);
 		--attr-type-color: var(--vscode-textPreformat-foreground);
+		--attr-active-border: var(--vscode-tab-activeBorder);
 		/* --font-size: 18px; */
 		--pk-name-color: var(--vscode-textLink-foreground);
 		--pk-type-color: var(--vscode-textLink-foreground);
 		--tbl-name-color: var(--vscode-textLink-foreground);
 		--resize-indicator-stroke-color: var(--vscode-focusBorder);
-		--rel-stroke-color: var(--vscode-dropdown-foreground);
-		--rel-active-stroke-color: var(--vscode-tab-activeBorder);
+		--ref-stroke-color: var(--vscode-dropdown-foreground);
+		--ref-active-stroke-color: var(--vscode-tab-activeBorder);
 	}
 
 	:global(body) {

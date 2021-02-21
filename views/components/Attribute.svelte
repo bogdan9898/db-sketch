@@ -7,10 +7,13 @@
 	export let attrPadding;
 	export let isPrimaryKey;
 	export let index;
+	export let highlight;
+
+	$: console.log(`${attrName} ${highlight}`);
 </script>
 
 <g class="tbl-attr-container" transform="translate(0 {height * (index + 1)})">
-	<rect class="tbl-attr" {width} {height} />
+	<rect class="tbl-attr" class:rect-active={highlight == true} {width} {height} />
 
 	<text
 		dx={attrPadding}
@@ -37,6 +40,12 @@
 <style>
 	.tbl-attr-container:hover rect {
 		fill: var(--attr-hover);
+		stroke: none !important;
+	}
+
+	.rect-active {
+		fill: var(--attr-hover) !important;
+		stroke: none !important;
 	}
 
 	.tbl-attr-container:hover {
@@ -45,6 +54,7 @@
 
 	.tbl-attr {
 		fill: var(--attr-bkg);
+		stroke: var(--attr-bkg);
 	}
 
 	.attr-name {

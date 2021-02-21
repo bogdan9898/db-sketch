@@ -1,11 +1,12 @@
 <script>
+	import { createEventDispatcher, onMount } from "svelte";
 	import { dimSpecs } from "../constants.js";
 	import { tablesDataStore } from "../stores.js";
 
 	export let pathData;
 
+	const dispatch = createEventDispatcher();
 	let pathCommands = "";
-
 	// t1 = table containing foreign keys
 	// t2 = table to which t1 is pointing
 
@@ -63,20 +64,45 @@
 			pathCommands = `M ${t1X} ${t1Y} H ${t2X + offset} V ${t2Y} L ${t2X} ${t2Y}`;
 		}
 	})();
+
+	onMount(() => {
+		dispatch("registerNotifier", {
+			target: "ref",
+			key: [t1Name, t2Name],
+			callback: (data) => {
+				console.log("data:");
+				console.log(data);
+			},
+		});
+	});
+
+	const handleMouseEvent = (_event, action) => {
+		dispatch(action, {
+			source: "ref",
+			tables: [t1Name, t2Name],
+			from: pathData.info["from"],
+			to: pathData.info["to"],
+		});
+	};
 </script>
 
-<path class="rel" d={pathCommands} />
+<path
+	class="ref"
+	d={pathCommands}
+	on:mouseenter={(event) => handleMouseEvent(event, "hightlightStart")}
+	on:mouseleave={(event) => handleMouseEvent(event, "highlightStop")}
+/>
 
 <style>
-	.rel {
+	.ref {
 		fill: none;
-		stroke: var(--rel-stroke-color);
+		stroke: var(--ref-stroke-color);
 		stroke-width: 2;
 	}
 
-	.rel:hover {
+	.ref:hover {
 		fill: none;
-		stroke: var(--rel-active-stroke-color);
-		stroke-width: 2;
+		stroke: var(--ref-active-stroke-color);
+		stroke-width: 4;
 	}
 </style>

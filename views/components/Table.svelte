@@ -4,15 +4,21 @@
 	import Header from "./Header.svelte";
 	import Attribute from "./Attribute.svelte";
 	import Corner from "./Corner.svelte";
+	import { createEventDispatcher, onMount } from "svelte";
 
 	export let tableData;
 	export let rootGroup;
 
+	const dispatch = createEventDispatcher();
 	const attributesCount = Object.entries(tableData["attributes"]).length;
 	const thisTableDataStore = tablesDataStore[tableData["name"]];
 
 	let origin = tableData["table-metadata"].translate;
 	let container;
+	let attrHighlightStatus = Object.keys(tableData["attributes"]).reduce((acc, el) => {
+		acc[el] = false;
+		return acc;
+	}, {});
 	// let corners = {};
 	// let elements = {
 	// 	header: undefined,
@@ -90,6 +96,29 @@
 			}
 		}
 	};
+
+	onMount(() => {
+		dispatch("registerNotifier", {
+			target: "table",
+			key: tableData["name"],
+			callback: (data) => {
+				switch (data.type) {
+					case "hightlightStart": {
+						for (const attr of data.attrs) {
+							attrHighlightStatus[attr] = true;
+						}
+						break;
+					}
+					case "hightlightStop": {
+						for (const attr of data.attrs) {
+							attrHighlightStatus[attr] = false;
+						}
+						break;
+					}
+				}
+			},
+		});
+	});
 </script>
 
 <g
@@ -127,6 +156,7 @@
 			{attrPadding}
 			isPrimaryKey={value["is-primary-key"]}
 			index={i}
+			highlight={attrHighlightStatus[key]}
 		/>
 	{/each}
 	{#each ["nw", "ne", "se", "sw"] as side}
