@@ -158,14 +158,13 @@
 
 <circle
 	r="15"
-	fill="#000"
+	fill="transparent"
 	cx={["nw", "sw"].includes(side) ? 0 : attrWidth}
 	cy={["nw", "ne"].includes(side) ? 0 : attrHeight * (attributesCount + 1)}
 	class="{side}-resizer"
 	bind:this={corner}
 />
 
-<!-- todo: add fill="transparent" to circle -->
 <style>
 	.nw-resizer {
 		cursor: nw-resize;

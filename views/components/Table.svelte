@@ -11,16 +11,16 @@
 	const attributesCount = Object.entries(tableData["attributes"]).length;
 	const thisTableDataStore = tablesDataStore[tableData["name"]];
 
-	$: origin = tableData["table-metadata"].translate;
+	let origin = tableData["table-metadata"].translate;
 	let container;
-	let corners = {};
-	let elements = {
-		header: undefined,
-		tableName: undefined,
-		attributes: Array.from({ length: attributesCount }, () => {
-			return {};
-		}),
-	};
+	// let corners = {};
+	// let elements = {
+	// 	header: undefined,
+	// 	tableName: undefined,
+	// 	attributes: Array.from({ length: attributesCount }, () => {
+	// 		return {};
+	// 	}),
+	// };
 
 	$: attrWidth = dimSpecs["attr-width"];
 	$: attrHeight = dimSpecs["attr-height"];
@@ -29,6 +29,7 @@
 	$: attrPadding = dimSpecs["attr-padding"];
 
 	$: thisTableDataStore.update((state) => {
+		state.origin = [...origin];
 		state.attrWidth = attrWidth;
 		state.attrHeight = attrHeight;
 		return state;

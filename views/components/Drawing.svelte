@@ -83,22 +83,26 @@
 	};
 
 	let tablesOrigins = {};
+	let i = 0;
 	for (let name of Object.keys(data_sample["tables"])) {
-		tablesOrigins[name] = [10, 10]; // todo: generate spawn coords
+		let tmp = [800 * i, 400 * i];
+		i++;
+		tablesOrigins[name] = tmp; // todo: generate non-overlaping spawn coords
 		tablesDataStore[name] = writable({
+			origin: tmp,
 			attrWidth: dimSpecs["attr-width"],
 			attrHeight: dimSpecs["attr-height"],
-			attrs: [Object.keys(data_sample["tables"][name])],
+			attrs: [...Object.keys(data_sample["tables"][name])],
 		});
 	}
 
 	let rootGroup;
 	let svg;
 
-	let resizeIndicatorIsVisible;
-	resizeIndicatorDataStore.subscribe((data) => {
-		resizeIndicatorIsVisible = data.isVisible;
-	});
+	// let resizeIndicatorIsVisible;
+	// resizeIndicatorDataStore.subscribe((data) => {
+	// 	resizeIndicatorIsVisible = data.isVisible;
+	// });
 
 	onMount(() => {
 		uiUtils.listenZoom(svg, {
@@ -140,14 +144,14 @@
 			<Table tableData={{ name, attributes, "table-metadata": { translate: tablesOrigins[name] } }} {rootGroup} />
 		{/each}
 
-		<!-- draw paths  -->
+		<!-- todo: swap draw order between Table and Realation -->
 		{#each Object.entries(data_sample["references"]) as [tablesNames, info]}
 			<Relation pathData={{ tablesNames, info }} />
 		{/each}
 	</g>
 	<rect
 		class="resizeIndicator"
-		visibility={resizeIndicatorIsVisible ? "visible" : "hidden"}
+		visibility={$resizeIndicatorDataStore.isVisible ? "visible" : "hidden"}
 		x={$resizeIndicatorDataStore.x}
 		y={$resizeIndicatorDataStore.y}
 		width={$resizeIndicatorDataStore.width}
@@ -190,10 +194,6 @@
 		height: 100%;
 		white-space: pre;
 		background: var(--bck-color);
-	}
-
-	#main-svg:active {
-		cursor: move;
 	}
 
 	.resizeIndicator {

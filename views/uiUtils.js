@@ -126,6 +126,7 @@ function startPan(event, callbacks) {
 	};
 	document.body.addEventListener("mousemove", tmpData.tickPanHandler);
 	document.body.addEventListener("mouseup", tmpData.stopPanHandler);
+	document.body.style.cursor = "move";
 
 	callbacks.start && callbacks.start(event, { prevCoords: tmpData.prevCoords });
 }
@@ -147,6 +148,7 @@ function stopPan(event, callbacks, tmpData) {
 	// remove event listeners in order for other 'pans' to work properly
 	document.body.removeEventListener("mousemove", tmpData.tickPanHandler);
 	document.body.removeEventListener("mouseup", tmpData.stopPanHandler);
+	document.body.style.cursor = "default";
 
 	callbacks.stop && callbacks.stop(event, { prevCoords: tmpData.prevCoords });
 }
