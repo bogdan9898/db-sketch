@@ -9,5 +9,7 @@ export const dimSpecs = {
 	"header-font-scale": 1.15,
 	"rounded-corner-x": 5,
 	"rounded-corner-y": 5,
-	"min-path-horizontal-len": 15,
+	"path-offset": 30,
+	"instances-text-horizontal-offset": 7,
+	"instances-text-vertical-offset": 10,
 };

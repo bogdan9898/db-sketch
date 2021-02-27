@@ -124,7 +124,7 @@
 						break;
 					}
 					default: {
-						console.error(`got unkown action: ${data.type}`);
+						console.error(`unkown action: ${data.type}`);
 						break;
 					}
 				}
