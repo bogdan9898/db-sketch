@@ -8,7 +8,6 @@
 	export let fontSize;
 	export let attrPadding;
 
-	let group;
 	const dispatch = createEventDispatcher();
 
 	function tickMove(ev) {
@@ -16,20 +15,9 @@
 			...ev.detail,
 		});
 	}
-
-	// onMount(() => {
-	// 	uiUtils.listenMove(group, {
-	// 		tick: (event, data) => {
-	// 			dispatch("move", {
-	// 				event,
-	// 				data,
-	// 			});
-	// 		},
-	// 	});
-	// });
 </script>
 
-<g class="draggable" bind:this={group} use:movable on:tickMove={tickMove}>
+<g class="draggable" use:movable on:tickMove={tickMove}>
 	<rect class="tbl-header" {width} {height} />
 
 	<text class="tbl-name txt" dx={attrPadding} dy={(height + fontSize) / 2} font-size={fontSize}>
