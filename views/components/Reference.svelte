@@ -147,9 +147,6 @@
 			const t1X = t1Origin.x;
 			const t1Y = t1Origin.y + t1AttrHeight * (t1Index + 1.5);
 			const t2Y = t2Origin.y + t2AttrHeight * (t2Index + 1.5);
-			console.log("~~~~~~~~~~~~~~~");
-			console.log(t1Y - offset);
-			console.log(t2Origin.y + t2AttrHeight * (t2AttrCount + 1));
 			if (t2Y - offset >= t1Origin.y + t1AttrHeight * (t1AttrCount + 1) || t1Origin.y - offset >= t2Y) {
 				// if(t1 above t2 and a shorter path can be drawn ||
 				// t1 below t2 and a shorter path can be drawn)

@@ -1,7 +1,6 @@
 <script>
-	import { onMount } from "svelte";
 	import { createEventDispatcher } from "svelte";
-	import uiUtils from "../uiUtils";
+	import { movable } from "../uiUtils/moveable.js";
 
 	export let tableName;
 	export let width;
@@ -9,22 +8,16 @@
 	export let fontSize;
 	export let attrPadding;
 
-	let group;
 	const dispatch = createEventDispatcher();
 
-	onMount(() => {
-		uiUtils.listenMove(group, {
-			tick: (event, data) => {
-				dispatch("move", {
-					event,
-					data,
-				});
-			},
+	function tickMove(ev) {
+		dispatch("move", {
+			...ev.detail,
 		});
-	});
+	}
 </script>
 
-<g class="draggable" bind:this={group}>
+<g class="draggable" use:movable on:tickMove={tickMove}>
 	<rect class="tbl-header" {width} {height} />
 
 	<text class="tbl-name txt" dx={attrPadding} dy={(height + fontSize) / 2} font-size={fontSize}>
