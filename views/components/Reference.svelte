@@ -208,13 +208,6 @@
 			to: pathData.info["to"],
 		});
 	};
-
-	// let test;
-	// onMount(() => {
-	// 	setInterval(() => {
-	// 		console.log(test.getCTM());
-	// 	}, 1000);
-	// });
 </script>
 
 <path
@@ -225,10 +218,10 @@
 	on:mouseenter={(event) => handleMouseEvent(event, "highlightStart")}
 	on:mouseleave={(event) => handleMouseEvent(event, "highlightStop")}
 />
-<text class="txt txt-before" x={instancesTextNodesCoords[0].x} y={instancesTextNodesCoords[0].y}>
+<text class="txt ref-tips" x={instancesTextNodesCoords[0].x} y={instancesTextNodesCoords[0].y}>
 	{entityInstances[0]}
 </text>
-<text class="txt txt-after" x={instancesTextNodesCoords[1].x} y={instancesTextNodesCoords[1].y}>
+<text class="txt ref-tips" x={instancesTextNodesCoords[1].x} y={instancesTextNodesCoords[1].y}>
 	{entityInstances[1]}
 </text>
 
@@ -251,11 +244,7 @@
 		stroke-width: 4;
 	}
 
-	.txt-before {
-		fill: var(--ref-active-stroke-color) !important;
-	}
-
-	.txt-after {
+	.ref-tips {
 		fill: var(--ref-active-stroke-color) !important;
 	}
 </style>
