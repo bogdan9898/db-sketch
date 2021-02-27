@@ -4,9 +4,10 @@
 	import Reference from "./Reference.svelte";
 	import { onMount } from "svelte";
 	import { writable } from "svelte/store";
-	import uiUtils from "../uiUtils.js";
 	import { resizeIndicatorDataStore, tablesDataStore } from "../stores.js";
 	import { dimSpecs } from "../constants.js";
+	import uiUtils from "../uiUtils.js";
+	import { zoombable } from "../uiUtils/zoomable.js";
 
 	// todo: receive data from parser
 	const data_sample = {
@@ -104,22 +105,34 @@
 	// 	resizeIndicatorIsVisible = data.isVisible;
 	// });
 
+	function tickZoom(event) {
+		const data = event.detail;
+		const { deltaY } = event.detail;
+		let ctm = rootGroup.getCTM();
+		let newTransform = [(data.mousePos.x - ctm.e) / ctm.a, (data.mousePos.y - ctm.f) / ctm.d];
+		ctm = ctm
+			.translate(...newTransform)
+			.scale(Math.sign(deltaY) < 0 ? 1.25 : 0.8)
+			.translate(-newTransform[0], -newTransform[1]);
+		rootGroup.setAttributeNS(null, "transform", `matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`);
+	}
+
 	onMount(() => {
-		uiUtils.listenZoom(svg, {
-			tick: (event, data) => {
-				let ctm = rootGroup.getCTM();
-				let newTransform = [(data.mousePos.x - ctm.e) / ctm.a, (data.mousePos.y - ctm.f) / ctm.d];
-				ctm = ctm
-					.translate(...newTransform)
-					.scale(Math.sign(event.deltaY) < 0 ? 1.25 : 0.8)
-					.translate(-newTransform[0], -newTransform[1]);
-				rootGroup.setAttributeNS(
-					null,
-					"transform",
-					`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
-				);
-			},
-		});
+		// uiUtils.listenZoom(svg, {
+		// 	tick: (event, data) => {
+		// 		let ctm = rootGroup.getCTM();
+		// 		let newTransform = [(data.mousePos.x - ctm.e) / ctm.a, (data.mousePos.y - ctm.f) / ctm.d];
+		// 		ctm = ctm
+		// 			.translate(...newTransform)
+		// 			.scale(Math.sign(event.deltaY) < 0 ? 1.25 : 0.8)
+		// 			.translate(-newTransform[0], -newTransform[1]);
+		// 		rootGroup.setAttributeNS(
+		// 			null,
+		// 			"transform",
+		// 			`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
+		// 		);
+		// 	},
+		// });
 
 		uiUtils.listenPan(svg, {
 			tick: (event, data) => {
@@ -191,7 +204,7 @@
 	};
 </script>
 
-<svg id="main-svg" width="100%" height="100%" bind:this={svg}>
+<svg id="main-svg" width="100%" height="100%" bind:this={svg} use:zoombable on:tickZoom={tickZoom}>
 	<g id="group-wrapper" bind:this={rootGroup}>
 		{#each Object.entries(data_sample["references"]) as [tablesNames, info]}
 			<Reference
