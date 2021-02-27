@@ -47,11 +47,10 @@
 	});
 
 	const handleMove = (ev) => {
-		const event = ev.detail.event;
-		const data = ev.detail.data;
+		const { event, prevCoords } = ev.detail;
 		const parentCtm = rootGroup.getCTM();
-		const newX = origin[0] + (event.pageX - data.prevCoords.x) / parentCtm.a;
-		const newY = origin[1] + (event.pageY - data.prevCoords.y) / parentCtm.d;
+		const newX = origin[0] + (event.pageX - prevCoords.x) / parentCtm.a;
+		const newY = origin[1] + (event.pageY - prevCoords.y) / parentCtm.d;
 		origin = [newX, newY];
 	};
 

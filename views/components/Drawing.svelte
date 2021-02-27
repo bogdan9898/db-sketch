@@ -2,11 +2,9 @@
 <script>
 	import Table from "./Table.svelte";
 	import Reference from "./Reference.svelte";
-	import { onMount } from "svelte";
 	import { writable } from "svelte/store";
 	import { resizeIndicatorDataStore, tablesDataStore } from "../stores.js";
 	import { dimSpecs } from "../constants.js";
-	import uiUtils from "../uiUtils.js";
 	import { zoombable } from "../uiUtils/zoomable.js";
 	import { panable } from "../uiUtils/panable.js";
 
@@ -114,7 +112,6 @@
 
 	function tickPan(ev) {
 		const data = ev.detail;
-		console.log(ev);
 		let ctm = rootGroup.getCTM();
 		ctm = ctm.translate(
 			(data.currCoords.x - data.prevCoords.x) / ctm.a,
@@ -123,37 +120,37 @@
 		rootGroup.setAttributeNS(null, "transform", `matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`);
 	}
 
-	onMount(() => {
-		// uiUtils.listenZoom(svg, {
-		// 	tick: (event, data) => {
-		// 		let ctm = rootGroup.getCTM();
-		// 		let newTransform = [(data.mousePos.x - ctm.e) / ctm.a, (data.mousePos.y - ctm.f) / ctm.d];
-		// 		ctm = ctm
-		// 			.translate(...newTransform)
-		// 			.scale(Math.sign(event.deltaY) < 0 ? 1.25 : 0.8)
-		// 			.translate(-newTransform[0], -newTransform[1]);
-		// 		rootGroup.setAttributeNS(
-		// 			null,
-		// 			"transform",
-		// 			`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
-		// 		);
-		// 	},
-		// });
-		// uiUtils.listenPan(svg, {
-		// 	tick: (event, data) => {
-		// 		let ctm = rootGroup.getCTM();
-		// 		ctm = ctm.translate(
-		// 			(event.pageX - data.prevCoords.x) / ctm.a,
-		// 			(event.pageY - data.prevCoords.y) / ctm.d
-		// 		);
-		// 		rootGroup.setAttributeNS(
-		// 			null,
-		// 			"transform",
-		// 			`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
-		// 		);
-		// 	},
-		// });
-	});
+	// onMount(() => {
+	// uiUtils.listenZoom(svg, {
+	// 	tick: (event, data) => {
+	// 		let ctm = rootGroup.getCTM();
+	// 		let newTransform = [(data.mousePos.x - ctm.e) / ctm.a, (data.mousePos.y - ctm.f) / ctm.d];
+	// 		ctm = ctm
+	// 			.translate(...newTransform)
+	// 			.scale(Math.sign(event.deltaY) < 0 ? 1.25 : 0.8)
+	// 			.translate(-newTransform[0], -newTransform[1]);
+	// 		rootGroup.setAttributeNS(
+	// 			null,
+	// 			"transform",
+	// 			`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
+	// 		);
+	// 	},
+	// });
+	// uiUtils.listenPan(svg, {
+	// 	tick: (event, data) => {
+	// 		let ctm = rootGroup.getCTM();
+	// 		ctm = ctm.translate(
+	// 			(event.pageX - data.prevCoords.x) / ctm.a,
+	// 			(event.pageY - data.prevCoords.y) / ctm.d
+	// 		);
+	// 		rootGroup.setAttributeNS(
+	// 			null,
+	// 			"transform",
+	// 			`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
+	// 		);
+	// 	},
+	// });
+	// });
 
 	let notifiers = { table: {}, ref: {} };
 	const registerNotifier = (event) => {
