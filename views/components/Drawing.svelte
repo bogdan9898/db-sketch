@@ -8,6 +8,7 @@
 	import { dimSpecs } from "../constants.js";
 	import uiUtils from "../uiUtils.js";
 	import { zoombable } from "../uiUtils/zoomable.js";
+	import { panable } from "../uiUtils/panable.js";
 
 	// todo: receive data from parser
 	const data_sample = {
@@ -100,20 +101,25 @@
 	let rootGroup;
 	let svg;
 
-	// let resizeIndicatorIsVisible;
-	// resizeIndicatorDataStore.subscribe((data) => {
-	// 	resizeIndicatorIsVisible = data.isVisible;
-	// });
-
-	function tickZoom(event) {
-		const data = event.detail;
-		const { deltaY } = event.detail;
+	function tickZoom(ev) {
+		const data = ev.detail;
 		let ctm = rootGroup.getCTM();
 		let newTransform = [(data.mousePos.x - ctm.e) / ctm.a, (data.mousePos.y - ctm.f) / ctm.d];
 		ctm = ctm
 			.translate(...newTransform)
-			.scale(Math.sign(deltaY) < 0 ? 1.25 : 0.8)
+			.scale(Math.sign(data.deltaY) < 0 ? 1.25 : 0.8)
 			.translate(-newTransform[0], -newTransform[1]);
+		rootGroup.setAttributeNS(null, "transform", `matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`);
+	}
+
+	function tickPan(ev) {
+		const data = ev.detail;
+		console.log(ev);
+		let ctm = rootGroup.getCTM();
+		ctm = ctm.translate(
+			(data.currCoords.x - data.prevCoords.x) / ctm.a,
+			(data.currCoords.y - data.prevCoords.y) / ctm.d
+		);
 		rootGroup.setAttributeNS(null, "transform", `matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`);
 	}
 
@@ -133,21 +139,20 @@
 		// 		);
 		// 	},
 		// });
-
-		uiUtils.listenPan(svg, {
-			tick: (event, data) => {
-				let ctm = rootGroup.getCTM();
-				ctm = ctm.translate(
-					(event.pageX - data.prevCoords.x) / ctm.a,
-					(event.pageY - data.prevCoords.y) / ctm.d
-				);
-				rootGroup.setAttributeNS(
-					null,
-					"transform",
-					`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
-				);
-			},
-		});
+		// uiUtils.listenPan(svg, {
+		// 	tick: (event, data) => {
+		// 		let ctm = rootGroup.getCTM();
+		// 		ctm = ctm.translate(
+		// 			(event.pageX - data.prevCoords.x) / ctm.a,
+		// 			(event.pageY - data.prevCoords.y) / ctm.d
+		// 		);
+		// 		rootGroup.setAttributeNS(
+		// 			null,
+		// 			"transform",
+		// 			`matrix(${ctm.a} ${ctm.b} ${ctm.c} ${ctm.d} ${ctm.e} ${ctm.f})`
+		// 		);
+		// 	},
+		// });
 	});
 
 	let notifiers = { table: {}, ref: {} };
@@ -204,7 +209,16 @@
 	};
 </script>
 
-<svg id="main-svg" width="100%" height="100%" bind:this={svg} use:zoombable on:tickZoom={tickZoom}>
+<svg
+	id="main-svg"
+	width="100%"
+	height="100%"
+	bind:this={svg}
+	use:zoombable
+	on:tickZoom={tickZoom}
+	use:panable
+	on:tickPan={tickPan}
+>
 	<g id="group-wrapper" bind:this={rootGroup}>
 		{#each Object.entries(data_sample["references"]) as [tablesNames, info]}
 			<Reference
