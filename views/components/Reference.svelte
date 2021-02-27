@@ -100,12 +100,12 @@
 			// pathLength = Math.abs((t1X + t2X) / 2 - t1X) + Math.abs(t2Y - t1Y) + Math.abs(t2X - (t1X + t2X) / 2);
 		} else if (t1Origin.x + t1AttrWidth / 2 >= t2Origin.x + t2AttrWidth / 2) {
 			// t2<->t1 but not enough space to draw direct path
-			const t1X = t1Origin.x + t1AttrWidth;
 			const t1Y = t1Origin.y + t1AttrHeight * (t1Index + 1.5);
 			const t2Y = t2Origin.y + t2AttrHeight * (t2Index + 1.5);
-			if (t2Y - offset >= t1Origin.y + t1AttrHeight * (t1AttrCount + 1) || t1Origin.y - offset >= t2Y) {
-				// if(t1 above t2 and a shorter path can be drawn ||
-				// t1 below t2 and a shorter path can be drawn)
+			if (t2Y - offset >= t1Origin.y + t1AttrHeight * (t1AttrCount + 1) || t2Y + offset <= t1Origin.y) {
+				// t1 obstructs right side of t2Attr
+				// if(t1 above t2Attr || t1 below t2Attr)
+				const t1X = t1Origin.x + t1AttrWidth;
 				const t2X = t2Origin.x + t2AttrWidth;
 				pathCommands = `M ${t1X} ${t1Y} H ${t1X + offset} V ${t2Y} H ${t2X}`;
 				instancesTextNodesCoords = [
@@ -113,8 +113,19 @@
 					{ x: t2X + textHorizontalOffset, y: t2Y - textVerticalOffset },
 				];
 				// pathLength = offset + Math.abs(t2Y - t1Y) + Math.abs(t2X - t1X - offset);
+			} else if (t1Y - offset >= t2Origin.y + t2AttrHeight * (t2AttrCount + 1) || t1Y + offset <= t2Origin.y) {
+				// t2 obstructs left side of t1Attr
+				// if(t2 above t1Attr || t2 below t1Attr)
+				const t1X = t1Origin.x;
+				const t2X = t2Origin.x;
+				pathCommands = `M ${t1X} ${t1Y} H ${Math.min(t1X - offset, t2X - offset)} V ${t2Y} H ${t2X}`;
+				instancesTextNodesCoords = [
+					{ x: t1X - textHorizontalOffset * 2, y: t1Y - textVerticalOffset },
+					{ x: t2X - textHorizontalOffset * 2, y: t2Y - textVerticalOffset },
+				];
 			} else {
 				// not short path can be drawn
+				const t1X = t1Origin.x + t1AttrWidth;
 				const t2X = t2Origin.x;
 				const tmpY =
 					t1Y >= t2Y
@@ -132,6 +143,7 @@
 			}
 		} else {
 			// t1<->t2 but not enough space to draw direct path
+			// t1 obstructs left side of t2Attr
 			const t1X = t1Origin.x;
 			const t1Y = t1Origin.y + t1AttrHeight * (t1Index + 1.5);
 			const t2Y = t2Origin.y + t2AttrHeight * (t2Index + 1.5);
@@ -148,6 +160,16 @@
 					{ x: t2X - textHorizontalOffset * 2, y: t2Y - textVerticalOffset },
 				];
 				// pathLength = offset + Math.abs(t2Y - t1Y) + Math.abs(t2X - t1X + offset);
+			} else if (t1Y - offset >= t2Origin.y + t2AttrHeight * (t2AttrCount + 1) || t1Y + offset <= t2Origin.y) {
+				// t2 obstructs left side of t1Attr
+				// if(t2 above t1Attr || t2 below t1Attr)
+				const t1X = t1Origin.x + t1AttrWidth;
+				const t2X = t2Origin.x + t2AttrWidth;
+				pathCommands = `M ${t1X} ${t1Y} H ${Math.max(t1X + offset, t2X + offset)} V ${t2Y} H ${t2X}`;
+				instancesTextNodesCoords = [
+					{ x: t1X + textHorizontalOffset, y: t1Y - textVerticalOffset },
+					{ x: t2X + textHorizontalOffset, y: t2Y - textVerticalOffset },
+				];
 			} else {
 				const t2X = t2Origin.x + t2AttrWidth;
 				const tmpY =
